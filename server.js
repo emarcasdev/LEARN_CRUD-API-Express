@@ -32,8 +32,11 @@ const Product = mongoose.model("Product", ProductSchema, collectionName);
 // Endpoint para recuperar todos los productos
 app.get("/api/products", async (req, res) => {
   try {
+    const { name } = req.query;
+    // Si recibimos un nombre filtramos por este
+    const filter = name ? { name: { $regex: name, $options: "i"} } : {};
     // Obtener todos los productos
-    let products = await Product.find();
+    let products = await Product.find(filter);
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: "Error en el servidor", error: error.message });
